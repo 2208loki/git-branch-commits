@@ -1,5 +1,0 @@
-curl http://localhost:8080/repos?username=2208loki
-
-curl "http://localhost:8080/commits?username=2208loki&repo=jsoncons"
-
-curl "http://localhost:8080/commits?username=ashishps1&repo=algorithms

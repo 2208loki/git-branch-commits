@@ -14,7 +14,7 @@ type Branches struct {
 }
 
 // FetchBranches fetches repositories for a given GitHub username.
-func FetchBranches(username string, user_repo string) ([]Branches, error) {
+func FetchBranches_temp(username string, user_repo string) ([]Branches, error) {
 	//https://api.github.com/repos/2208loki/jsoncons/branches
 	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/branches", username, user_repo)
 
@@ -25,7 +25,8 @@ func FetchBranches(username string, user_repo string) ([]Branches, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("failed to fetch branches %s", resp.Status)
+
+		return nil, fmt.Errorf("\nfailed to fetch branches %s \n %s", resp.Status, resp.Body)
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)

@@ -16,7 +16,8 @@ async function fetchRepositories() {
     try {
         const response = await fetch(`http://localhost:8080/repos?username=${username}`);
         if (!response.ok) {
-            throw new Error(`Error: ${response.statusText}`);
+            const errorText = await response.text(); // Read raw error message from server
+            throw new Error(errorText);
         }
 
         const repos = await response.json();
@@ -29,11 +30,13 @@ async function fetchRepositories() {
 
             repos.forEach(repo => {
                 const listItem = document.createElement('li');
-                const forkStatus = repo.is_fork ? "(Fork)" : "(Original)";
+                //const forkStatus = repo.is_fork ? "(Fork)" : "(Original)";
                 listItem.innerHTML = `
-                    <strong>${repo.name}</strong>: ${repo.description || 'No description'} ${forkStatus}
-                    (<a href="${repo.html_url}" target="_blank">View</a>) 
-                    <button onclick="fetchCommits('${username}', '${repo.name}')">View Commits</button>
+                    <strong>${repo.name}</strong>: ${repo.description || 'No description'}
+                    (<a href="${repo.html_url}" target="_blank">View Repo</a>) 
+                        <a href="commits.html?username=${username}&repo=${repo.name}" target="_blank" rel="noopener noreferrer">
+                            <button>View Branches</button>
+                        </a>
                     <div class="commit-list" id="commits-${repo.name}"></div>
                 `;
                 repoList.appendChild(listItem);
@@ -46,40 +49,6 @@ async function fetchRepositories() {
     }
 }
 
-// Function to fetch and display commits for a repository
-async function fetchCommits(username, repoName) {
-    const commitsDiv = document.getElementById(`commits-${repoName}`);
-    commitsDiv.innerHTML = 'Loading commits...';
-
-    try {
-        const response = await fetch(`http://localhost:8080/commits?username=${username}&repo=${repoName}`);
-        if (!response.ok) {
-            throw new Error(`Error: ${response.statusText}`);
-        }
-
-        const commits = await response.json();       
-        if (commits.length === 0) {
-            commitsDiv.innerHTML = '<p>No commits found for this repository.</p>';
-        } else {
-            const commitList = document.createElement('ul');
-            commits.forEach(commit => {
-                const commitItem = document.createElement('li');
-                commitItem.innerHTML = `
-                <a href="https://github.com/${username}/${repoName}/commit/${commit.sha}" target="_blank">
-                    <strong>${commit.sha}</strong>
-                </a>: ${commit.commit.message} 
-                by ${commit.commit.author.name} on ${commit.commit.author.date}
-            `;
-                commitList.appendChild(commitItem);
-            });
-
-            commitsDiv.innerHTML = '<h3>Commits:</h3>';
-            commitsDiv.appendChild(commitList);
-        }
-    } catch (error) {
-        commitsDiv.innerHTML = `Error: ${error.message}`;
-    }
-}
 
 // Add event listener for the search button
 searchButton.addEventListener('click', fetchRepositories);

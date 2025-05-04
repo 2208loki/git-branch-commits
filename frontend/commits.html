@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Commit Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Commit Details</h1>
+    <div id="commitResults">Loading commits...</div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const username = urlParams.get('username');
+        const repo = urlParams.get('repo');
+
+        async function fetchCommits(username, repo) {
+            const commitResults = document.getElementById('commitResults');
+            commitResults.innerHTML = `Fetching commits for ${repo}...`;
+
+            try {
+                const response = await fetch(`http://localhost:8080/commits?username=${username}&repo=${repo}`);
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.statusText}`);
+                }
+
+                const branches = await response.json();
+
+                if (branches.length === 0) {
+                    commitResults.innerHTML = `<p>No branches found for repository: ${repo}</p>`;
+                } else {
+                    commitResults.innerHTML = `<h2>Branches and latest commits for ${repo}:</h2>`;
+                    const branchList = document.createElement('ul');
+
+                    branches.forEach(branch => {
+                        const branchItem = document.createElement('li');
+                        const commitSha = branch.commit && branch.commit.sha;
+                        const commitUrl = `https://github.com/${username}/${repo}/commit/${commitSha}`;
+                        branchItem.innerHTML = `
+                            <strong>Branch:</strong> ${branch.name}<br/>
+                            <strong>Latest Commit:</strong> 
+                            <a href="${commitUrl}" target="_blank" rel="noopener noreferrer">${commitSha}</a>
+                        `;
+                        branchList.appendChild(branchItem);
+                    });
+
+                    commitResults.appendChild(branchList);
+                }
+
+            } catch (error) {
+                commitResults.innerHTML = `Error fetching commits: ${error.message}`;
+            }
+        }
+
+        // Trigger fetch on page load
+        if (username && repo) {
+            fetchCommits(username, repo);
+        } else {
+            document.getElementById('commitResults').innerText = 'Invalid or missing parameters.';
+        }
+    </script>
+</body>
+</html>

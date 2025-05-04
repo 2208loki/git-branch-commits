@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 
@@ -72,7 +71,7 @@ func handleRepositories(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	for i, repo := range repositories {
+	/*for i, repo := range repositories {
 		isFork, err := apicalls.IsFork(username, repo.Name)
 		if err != nil {
 			log.Printf("error checking fork status for %s/%s: %v", username, repo.Name, err)
@@ -80,7 +79,7 @@ func handleRepositories(w http.ResponseWriter, r *http.Request) {
 		} else {
 			repositories[i].IsFork = isFork
 		}
-	}
+	}*/
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(repositories)
@@ -94,7 +93,8 @@ func handleCommits(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	commitList, err := apicalls.FetchCommits(username, repoName)
+	//commitList, err := apicalls.FetchCommits(username, repoName)
+	commitList, err := apicalls.FetchBranches(username, repoName)
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Error fetching commits: %v", err), http.StatusInternalServerError)
 		return

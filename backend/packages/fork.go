@@ -20,7 +20,8 @@ func IsFork(username, repoName string) (bool, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return false, fmt.Errorf("failed to fetch repository metadata: %s", resp.Status)
+
+		return false, fmt.Errorf("\nfailed to fetch repository metadata: %s \n %s", resp.Status, resp.Body)
 	}
 
 	var metadata RepoMetadata

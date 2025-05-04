@@ -24,12 +24,14 @@ func FetchRepositories(username string) ([]Repository, error) {
 		return nil, err
 	}
 	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("failed to fetch repositories: %s", resp.Status)
+
+		return nil, fmt.Errorf("\nfailed to fetch repositories: %s \n %s", resp.Status, body)
 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
+	//body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
