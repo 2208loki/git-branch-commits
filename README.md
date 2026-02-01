@@ -1,4 +1,4 @@
-# Git Branch Commits
+# Git_Branch_Commits
 
 This deployment will be helpful for viewing latest commit details of different branches. esp. for viewing commit links (commited to others repo through new branchs). This might not be helpful to check details of own repo with commits done to same branch/master.
 
