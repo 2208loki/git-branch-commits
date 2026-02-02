@@ -10,4 +10,4 @@ docker load -i git-commits-app.tar
 docker run -p 8080:8080 git-commits-app
 ```
 
-Now deployment should be now accessible through this simple website with link  `http://localhost:8080/` in your local machine.
+Now deployment should be accessible through this simple website with link  `http://localhost:8080/` in your local machine.
